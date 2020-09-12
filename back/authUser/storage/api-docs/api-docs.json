@@ -1,0 +1,248 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "wday",
+        "description": "API AuthController",
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/api/auth/signup": {
+            "post": {
+                "tags": [
+                    "AuthController"
+                ],
+                "summary": "Registro de usuario",
+                "operationId": "register",
+                "parameters": [
+                    {
+                        "name": "Register",
+                        "in": "query",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SignupRequest"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Usuario creado",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "400": {
+                        "description": "Solicitud no válida"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    },
+                    "422": {
+                        "description": "Error validación"
+                    }
+                }
+            }
+        },
+        "/api/auth/login": {
+            "post": {
+                "tags": [
+                    "AuthController"
+                ],
+                "summary": "Login de usuario",
+                "operationId": "login",
+                "parameters": [
+                    {
+                        "name": "Login",
+                        "in": "query",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/LoginRequest"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Usuario creado",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "400": {
+                        "description": "Solicitud no válida"
+                    },
+                    "401": {
+                        "description": "No autorizado"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    },
+                    "422": {
+                        "description": "Error validación"
+                    }
+                }
+            }
+        },
+        "/api/auth/logout": {
+            "get": {
+                "tags": [
+                    "AuthController"
+                ],
+                "summary": "Logout de usuario",
+                "operationId": "logout",
+                "responses": {
+                    "201": {
+                        "description": "Usuario creado",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "400": {
+                        "description": "Solicitud no válida"
+                    },
+                    "401": {
+                        "description": "No autorizado"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    },
+                    "422": {
+                        "description": "Error validación"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/auth/user": {
+            "get": {
+                "tags": [
+                    "AuthController"
+                ],
+                "summary": "Datos del usuario",
+                "operationId": "user",
+                "responses": {
+                    "200": {
+                        "description": "Usuario",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/User"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Solicitud no válida"
+                    },
+                    "401": {
+                        "description": "No autorizado"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    },
+                    "422": {
+                        "description": "Error validación"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "LoginRequest": {
+                "title": "LoginRequest",
+                "description": "Login Request",
+                "properties": {
+                    "email": {
+                        "description": "Email del usuario",
+                        "type": "string",
+                        "format": "email"
+                    },
+                    "password": {
+                        "description": "Contraseña del usuario",
+                        "type": "string",
+                        "format": "password"
+                    },
+                    "remember_me": {
+                        "description": "Recordar conexión del usuario",
+                        "type": "boolean"
+                    }
+                },
+                "type": "object"
+            },
+            "SignupRequest": {
+                "title": "SignupRequest",
+                "description": "Signup Request",
+                "properties": {
+                    "name": {
+                        "description": "Nombre del usuario",
+                        "type": "string"
+                    },
+                    "email": {
+                        "description": "Email del usuario",
+                        "type": "string",
+                        "format": "email"
+                    },
+                    "password": {
+                        "description": "Contraseña del usuario",
+                        "type": "string",
+                        "format": "password"
+                    }
+                },
+                "type": "object"
+            },
+            "User": {
+                "title": "User",
+                "description": "Representación del usuario",
+                "properties": {
+                    "id": {
+                        "description": "Id del usuario",
+                        "type": "integer"
+                    },
+                    "name": {
+                        "description": "Nombre del usuario",
+                        "type": "string"
+                    },
+                    "email": {
+                        "description": "Email del usuario",
+                        "type": "string",
+                        "format": "email"
+                    },
+                    "email_verified_at": {
+                        "description": "Cuando el usuario verifica su email",
+                        "type": "string",
+                        "format": "date-time",
+                        "nullable": true
+                    },
+                    "active": {
+                        "description": "Si usuario se encuentra activo",
+                        "type": "boolean"
+                    }
+                },
+                "type": "object"
+            }
+        },
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "scheme": "bearer"
+            }
+        }
+    },
+    "security": [
+        []
+    ]
+}
