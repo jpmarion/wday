@@ -158,6 +158,90 @@
                     }
                 ]
             }
+        },
+        "/api/password/create": {
+            "post": {
+                "tags": [
+                    "PasswordResetController"
+                ],
+                "summary": "Crear token",
+                "operationId": "createPasswordReset",
+                "parameters": [
+                    {
+                        "name": "create",
+                        "in": "query",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PasswordResetCreateRequest"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "¡Hemos enviado un correo electrónico con el enlace de restablecimiento de contraseña!",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "400": {
+                        "description": "Solicitud no válida"
+                    },
+                    "401": {
+                        "description": "No autorizado"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    },
+                    "422": {
+                        "description": "Error validación"
+                    }
+                }
+            }
+        },
+        "/api/password/reset": {
+            "post": {
+                "tags": [
+                    "PasswordResetController"
+                ],
+                "summary": "Reset token",
+                "operationId": "resetPasswordReset",
+                "parameters": [
+                    {
+                        "name": "reset",
+                        "in": "query",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PasswordResetResetRequest"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "¡Restablecida el token!",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "400": {
+                        "description": "Solicitud no válida"
+                    },
+                    "401": {
+                        "description": "No autorizado"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    },
+                    "422": {
+                        "description": "Error validación"
+                    }
+                }
+            }
         }
     },
     "components": {
@@ -179,6 +263,39 @@
                     "remember_me": {
                         "description": "Recordar conexión del usuario",
                         "type": "boolean"
+                    }
+                },
+                "type": "object"
+            },
+            "PasswordResetCreateRequest": {
+                "title": "PasswordResetCreateRequest",
+                "description": "Password Reset Create Request",
+                "properties": {
+                    "email": {
+                        "description": "Email del usuario",
+                        "type": "string",
+                        "format": "email"
+                    }
+                },
+                "type": "object"
+            },
+            "PasswordResetResetRequest": {
+                "title": "PasswordResetResetRequest",
+                "description": "Password Reset Reset Request",
+                "properties": {
+                    "email": {
+                        "description": "Email del usuario",
+                        "type": "string",
+                        "format": "email"
+                    },
+                    "password": {
+                        "description": "Contraseña del usuario",
+                        "type": "string",
+                        "format": "password"
+                    },
+                    "token": {
+                        "description": "Token",
+                        "type": "string"
                     }
                 },
                 "type": "object"
