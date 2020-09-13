@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\LoginRequest;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -72,6 +73,8 @@ class AuthController extends Controller
         ]);
         $user->save();
 
+        $user->notify(new SignupActivate($user));
+
         return response()->json(['message' => 'Usuario creado correctamente'], 201);
     }
 
@@ -111,15 +114,11 @@ class AuthController extends Controller
      *  )
      *)
      */
-    public function login(Request $request)
+    public function login(LoginRequest $request)
     {
-        $request->validate([
-            'email' => 'required|string|email',
-            'password' => 'required|string',
-            'remember_me' => 'boolean'
-        ]);
-
         $credential = request(['email', 'password']);
+        $credentials['active'] = 1;
+        $credentials['deleted_at'] = null;
         if (!Auth::attempt($credential)) {
             return response()->json(['message' => 'Desautorizado'], 401);
         }
@@ -213,5 +212,17 @@ class AuthController extends Controller
     public function user(Request $request)
     {
         return response()->json($request->user());
+    }
+
+    public function signupActivate($token)
+    {
+        $user = User::where('activation_token', $token)->first();
+        if (!$user) {
+            return response()->json(['message' => 'El token de activación es inválido'], 404);
+        }
+        $user->active = true;
+        $user->activation_token = '';
+        $user->save();
+        return $user;
     }
 }
