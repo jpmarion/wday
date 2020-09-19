@@ -12,20 +12,17 @@
                     "AuthController"
                 ],
                 "summary": "Registro de usuario",
-                "operationId": "register",
-                "parameters": [
-                    {
-                        "name": "Register",
-                        "in": "query",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/SignupRequest"
-                                }
+                "operationId": "signup",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/SignupRequest"
                             }
                         }
                     }
-                ],
+                },
                 "responses": {
                     "201": {
                         "description": "Usuario creado",
@@ -52,19 +49,16 @@
                 ],
                 "summary": "Login de usuario",
                 "operationId": "login",
-                "parameters": [
-                    {
-                        "name": "Login",
-                        "in": "query",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/LoginRequest"
-                                }
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/LoginRequest"
                             }
                         }
                     }
-                ],
+                },
                 "responses": {
                     "201": {
                         "description": "Usuario creado",
@@ -166,19 +160,16 @@
                 ],
                 "summary": "Crear token",
                 "operationId": "createPasswordReset",
-                "parameters": [
-                    {
-                        "name": "create",
-                        "in": "query",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/PasswordResetCreateRequest"
-                                }
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PasswordResetCreateRequest"
                             }
                         }
                     }
-                ],
+                },
                 "responses": {
                     "200": {
                         "description": "¡Hemos enviado un correo electrónico con el enlace de restablecimiento de contraseña!",
@@ -208,19 +199,16 @@
                 ],
                 "summary": "Reset token",
                 "operationId": "resetPasswordReset",
-                "parameters": [
-                    {
-                        "name": "reset",
-                        "in": "query",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/PasswordResetResetRequest"
-                                }
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PasswordResetResetRequest"
                             }
                         }
                     }
-                ],
+                },
                 "responses": {
                     "200": {
                         "description": "¡Restablecida el token!",
@@ -315,6 +303,11 @@
                     },
                     "password": {
                         "description": "Contraseña del usuario",
+                        "type": "string",
+                        "format": "password"
+                    },
+                    "password_confirmation": {
+                        "description": "Confirmar Contraseña del usuario",
                         "type": "string",
                         "format": "password"
                     }

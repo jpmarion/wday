@@ -15,21 +15,19 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::group(['prefix' => 'auth'], function () {
-    Route::post('login', 'AuthController@login');
-    Route::post('signup', 'AuthController@signup');
-    Route::get('signup/activate/{token}', 'AuthController@signupActivate');
+    Route::post('signup',  'App\Http\Controllers\API\AuthController@signup');
+    Route::post('login', 'App\Http\Controllers\API\AuthController@login');
+    Route::get('signupactivate/{token}', 'App\Http\Controllers\API\AuthController@signupActivate');
     Route::group(['middleware' => ['auth:api']], function () {
-        Route::get('logout', 'AuthController@logout');
-        Route::get('user', 'AuthController@user');
+        Route::get('logout', 'App\Http\Controllers\API\AuthController@logout');
+        Route::get('user', 'App\Http\Controllers\API\AuthController@user');
     });
 });
 
 Route::group([
-    'namespace' => 'Auth',
-    'middleware' => 'api',
     'prefix' => 'password'
 ], function () {
-    Route::post('create', 'PasswordResetController@create');
-    Route::get('find/{token}', 'PasswordResetController@find');
-    Route::post('reset', 'PasswordResetController@reset');
+    Route::post('create', 'App\Http\Controllers\API\PasswordResetController@create');
+    Route::get('find/{token}', 'App\Http\Controllers\API\PasswordResetController@find');
+    Route::post('reset', 'App\Http\Controllers\API\PasswordResetController@reset');
 });

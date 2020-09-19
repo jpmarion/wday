@@ -4,6 +4,8 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginRequest;
+use App\Http\Requests\SignupRequest;
+use App\Notifications\SignupActivate;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -31,11 +33,10 @@ class AuthController extends Controller
      *      path="/api/auth/signup",
      *      tags={"AuthController"},
      *      summary="Registro de usuario",
-     *      operationId="register",
-     *      @OA\Parameter(
-     *          name="Register",
-     *          in="query",
-     *          @OA\JsonContent(ref="#/components/schemas/SignupRequest"),
+     *      operationId="signup",
+     *      @OA\RequestBody(
+     *          required=true,
+     *          @OA\JsonContent(ref="#/components/schemas/SignupRequest")
      *      ),
      *  @OA\Response(
      *      response=201,
@@ -58,18 +59,13 @@ class AuthController extends Controller
      *  )
      *)
      */
-    public function signup(Request $request)
+    public function signup(SignupRequest $request)
     {
-        $request->validate([
-            'name' => 'required|string',
-            'email' => 'required|string|email|unique:users',
-            'password' => 'required|string|confirmed'
-        ]);
-
         $user = new User([
             'name' => $request->name,
             'email' => $request->email,
-            'password' => bcrypt($request->password)
+            'password' => bcrypt($request->password),
+            'activation_token'  => bcrypt($request->email),
         ]);
         $user->save();
 
@@ -84,10 +80,9 @@ class AuthController extends Controller
      *      tags={"AuthController"},
      *      summary="Login de usuario",
      *      operationId="login",
-     *      @OA\Parameter(
-     *          name="Login",
-     *          in="query",
-     *          @OA\JsonContent(ref="#/components/schemas/LoginRequest"),
+     *      @OA\RequestBody(
+     *          required=true,
+     *          @OA\JsonContent(ref="#/components/schemas/LoginRequest")
      *      ),
      *  @OA\Response(
      *      response=201,
@@ -116,10 +111,10 @@ class AuthController extends Controller
      */
     public function login(LoginRequest $request)
     {
-        $credential = request(['email', 'password']);
+        $credentials = request(['email', 'password']);
         $credentials['active'] = 1;
         $credentials['deleted_at'] = null;
-        if (!Auth::attempt($credential)) {
+        if (!Auth::attempt($credentials)) {
             return response()->json(['message' => 'Desautorizado'], 401);
         }
 
@@ -128,7 +123,7 @@ class AuthController extends Controller
         $token = $tokenResult->token;
 
         if ($request->remember_me) {
-            $token->expired_at = Carbon::now()->addWeek(1);
+            $token->expires_at = Carbon::now()->addWeek(1);
         }
         $token->save();
 

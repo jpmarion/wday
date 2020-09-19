@@ -26,11 +26,12 @@ class SignupRequest extends FormRequest
         return [
             'name' => 'required|string',
             'email' => 'required|string|email|unique:users',
-            'password' => 'required|string|confirmed'
+            'password' => 'required|string|confirmed',
+            'password_confirmation' => 'required|string'
         ];
     }
 
-     /**
+    /**
      *
      * @OA\Schema(
      *     schema="SignupRequest",
@@ -38,7 +39,8 @@ class SignupRequest extends FormRequest
      *     description="Signup Request",
      *     @OA\Property(type="string", property="name", description="Nombre del usuario"),
      *     @OA\Property(type="string", property="email", format="email", description="Email del usuario"),
-     *     @OA\Property(type="string", property="password", format="password", description="Contraseña del usuario")
+     *     @OA\Property(type="string", property="password", format="password", description="Contraseña del usuario"),
+     *     @OA\Property(type="string", property="password_confirmation", format="password", description="Confirmar Contraseña del usuario")
      * )
      */
 }

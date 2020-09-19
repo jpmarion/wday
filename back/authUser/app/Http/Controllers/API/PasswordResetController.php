@@ -5,7 +5,9 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\PasswordResetCreateRequest;
 use App\Models\PasswordReset;
-use Illuminate\Http\Request;
+use App\Models\User;
+use App\Notifications\PasswordResetRequest;
+use Carbon\Carbon;
 
 class PasswordResetController extends Controller
 {
@@ -21,10 +23,9 @@ class PasswordResetController extends Controller
      *      tags={"PasswordResetController"},
      *      summary="Crear token",
      *      operationId="createPasswordReset",
-     *      @OA\Parameter(
-     *          name="create",
-     *          in="query",
-     *          @OA\JsonContent(ref="#/components/schemas/PasswordResetCreateRequest"),
+     *      @OA\RequestBody(
+     *          required=true,
+     *          @OA\JsonContent(ref="#/components/schemas/PasswordResetCreateRequest")
      *      ),
      *  @OA\Response(
      *      response=200,
@@ -58,19 +59,19 @@ class PasswordResetController extends Controller
             return response()->json([
                 'message' => 'No podemos encontrar un usuario con esa dirección de correo electrónico.'
             ], 404);
-            $passwordReset = PasswordReset::updateOrCreate(
-                ['email' => $user->email],
-                [
-                    'email' => $user->email,
-                    'token' => bcrypt($user->email)
-                ]
-            );
-            if ($user && $passwordReset) {
-                $user->notify(new PasswordResetCreateRequest($passwordReset->token));
-                return response()->json([
-                    'message' => '¡Hemos enviado un correo electrónico con el enlace de restablecimiento de contraseña!'
-                ]);
-            }
+        }
+        $passwordReset = PasswordReset::updateOrCreate(
+            ['email' => $user->email],
+            [
+                'email' => $user->email,
+                'token' => bcrypt($user->email)
+            ]
+        );
+        if ($user && $passwordReset) {
+            $user->notify(new PasswordResetRequest($passwordReset->token));
+            return response()->json([
+                'message' => '¡Hemos enviado un correo electrónico con el enlace de restablecimiento de contraseña!'
+            ]);
         }
     }
 
@@ -86,6 +87,13 @@ class PasswordResetController extends Controller
     {
         $passwordReset = PasswordReset::where('token', $token)->first();
         if (!$passwordReset) {
+            return response()->json([
+                'message' => 'Este token de restablecimiento de contraseña no es válido.'
+            ], 404);
+        }
+
+        if (Carbon::parse($passwordReset->updated_at)->addMinutes(720)->isPast()) {
+            $passwordReset->delete();
             return response()->json([
                 'message' => 'Este token de restablecimiento de contraseña no es válido.'
             ], 404);
@@ -109,10 +117,9 @@ class PasswordResetController extends Controller
      *      tags={"PasswordResetController"},
      *      summary="Reset token",
      *      operationId="resetPasswordReset",
-     *      @OA\Parameter(
-     *          name="reset",
-     *          in="query",
-     *          @OA\JsonContent(ref="#/components/schemas/PasswordResetResetRequest"),
+     *      @OA\RequestBody(
+     *          required=true,
+     *          @OA\JsonContent(ref="#/components/schemas/PasswordResetResetRequest")
      *      ),
      *  @OA\Response(
      *      response=200,
